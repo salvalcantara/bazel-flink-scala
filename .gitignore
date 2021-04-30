@@ -1,0 +1,38 @@
+# sbt
+bin/
+target/
+build/
+
+# eclipse
+.classpath
+.project
+.settings
+.worksheet
+
+# intellij idea
+*.log
+*.iml
+*.ipr
+*.iws
+.idea
+
+# mac
+.DS_Store
+
+# other?
+.history
+.scala_dependencies
+.cache
+.cache-main
+*.tgz
+test-output
+
+#general
+*.class
+
+bazel-bin
+bazel-npl
+bazel-out
+bazel-testlogs
+bazel-runtime
+
