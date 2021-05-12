@@ -1,4 +1,5 @@
 # sbt
+# (may want to keep parts of 'project')
 bin/
 target/
 build/
@@ -35,4 +36,4 @@ bazel-npl
 bazel-out
 bazel-testlogs
 bazel-runtime
-
+bazel-bazel-flink-scala

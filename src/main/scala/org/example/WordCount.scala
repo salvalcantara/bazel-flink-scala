@@ -1,6 +1,6 @@
 package org.example
 
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,36 +18,55 @@ package org.example
  * limitations under the License.
  */
 
-import org.apache.flink.api.scala._
+import org.apache.flink.streaming.api.scala._
+
+import scala.language.postfixOps
 
 /**
- * Implements the "WordCount" program that computes a simple word occurrence histogram
- * over some sample data
+ * This example shows an implementation of WordCount with data from a text socket.
+ * To run the example make sure that the service providing the text data is already up and running.
+ *
+ * To start an example socket text stream on your local machine run netcat from a command line,
+ * where the parameter specifies the port number:
+ *
+ * {{{
+ *   nc -lk 9999
+ * }}}
+ *
+ * Usage:
+ * {{{
+ *   WordCount <hostname> <port> <output path>
+ * }}}
  *
  * This example shows how to:
  *
- *   - write a simple Flink program.
- *   - use Tuple data types.
+ *   - use StreamExecutionEnvironment.socketTextStream
+ *   - write a simple Flink Streaming program in scala.
  *   - write and use user-defined functions.
  */
 object WordCount {
+
   def main(args: Array[String]): Unit = {
+    if (args.length != 2) {
+      System.err.println("USAGE:\nWordCount <hostname> <port>")
+      return
+    }
 
-    // set up the execution environment
-    val env = ExecutionEnvironment.getExecutionEnvironment
+    val hostName = args(0)
+    val port = args(1).toInt
 
-    // get input data
-    val text = env.fromElements("To be, or not to be,--that is the question:--",
-      "Whether 'tis nobler in the mind to suffer", "The slings and arrows of outrageous fortune",
-      "Or to take arms against a sea of troubles,")
+    val env = StreamExecutionEnvironment.getExecutionEnvironment
 
-    val counts = text.flatMap { _.toLowerCase.split("\\W+") }
+    //Create streams for names and ages by mapping the inputs to the corresponding objects
+    val text = env.socketTextStream(hostName, port)
+    val counts = text.flatMap { _.toLowerCase.split("\\W+") filter { _.nonEmpty } }
       .map { (_, 1) }
-      .groupBy(0)
+      .keyBy(0)
       .sum(1)
 
-    // execute and print result
-    counts.print()
+    counts print
 
+    env.execute("Scala (Stream) WordCount Example")
   }
+
 }

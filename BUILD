@@ -1,14 +1,11 @@
 package(default_visibility = ["//visibility:public"])
 
-load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library", "scala_test")
+load("//tools/flink:flink.bzl", "setup_deploy_env")
+load("//tools:defs.bzl", "FLINK_PROVIDED_ADDONS", "FLINK_SCALA_VERSION", "FLINK_VERSION")
 
-scala_library(
-    name = "job",
-    srcs = glob(["src/main/scala/**/*.scala"]),
-    deps = [
-        "@vendor//vendor/org/apache/flink:flink_clients",
-        "@vendor//vendor/org/apache/flink:flink_scala",
-        "@vendor//vendor/org/apache/flink:flink_streaming_scala",
-    ]
+setup_deploy_env(
+    name = "default_flink_deploy_env",
+    addons = FLINK_PROVIDED_ADDONS,
+    scala_version = FLINK_SCALA_VERSION,
+    version = FLINK_VERSION,
 )
-
